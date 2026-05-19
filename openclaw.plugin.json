@@ -2,7 +2,7 @@
   "id": "tubealfred-youtube",
   "name": "TubeAlfred YouTube",
   "description": "Read-only TubeAlfred YouTube API tools for videos, transcripts, comments, replies, channels, playlists, search, and URL resolution.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "contracts": {
     "tools": [
       "tubealfred_youtube_video_get",
@@ -27,7 +27,7 @@
   "uiHints": {
     "apiKey": {
       "label": "TubeAlfred API key",
-      "help": "Used to authenticate read-only calls to the TubeAlfred YouTube API. You can also set TUBEALFRED_API_KEY.",
+      "help": "Used to authenticate read-only calls to the TubeAlfred YouTube API.",
       "placeholder": "ta_live_...",
       "sensitive": true
     },
@@ -56,7 +56,7 @@
     "properties": {
       "apiKey": {
         "type": "string",
-        "description": "TubeAlfred API key. If omitted, the plugin reads TUBEALFRED_API_KEY or TUBE_ALFRED_API_KEY from the environment."
+        "description": "TubeAlfred API key."
       },
       "apiBaseUrl": {
         "type": "string",

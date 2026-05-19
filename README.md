@@ -29,12 +29,6 @@ Set a TubeAlfred API key in your OpenClaw config:
 }
 ```
 
-You can also use an environment variable:
-
-```bash
-export TUBEALFRED_API_KEY=ta_live_...
-```
-
 Advanced config:
 
 ```js

@@ -3,7 +3,7 @@ import { Type } from "typebox";
 
 const PLUGIN_ID = "tubealfred-youtube";
 const PRODUCT_NAME = "TubeAlfred YouTube OpenClaw plugin";
-const PACKAGE_VERSION = "0.1.0";
+const PACKAGE_VERSION = "0.1.1";
 const DEFAULT_API_URL = "https://api.tubealfred.com";
 const DEFAULT_TIMEOUT_MS = 30_000;
 const DEFAULT_RETRIES = 1;
@@ -376,25 +376,19 @@ function labelForTool(name: string): string {
     .join(" ");
 }
 
-function readEnv(name: string): string | undefined {
-  const value = process.env[name];
-
-  return value === undefined || value === "" ? undefined : value;
-}
-
 function toRecord(value: unknown): Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value) ? value as Record<string, unknown> : {};
 }
 
 function resolveConfig(rawConfig: Record<string, unknown>): ResolvedConfig {
   const config = rawConfig as TubeAlfredPluginConfig;
-  const apiKey = optionalString(config.apiKey) ?? readEnv("TUBEALFRED_API_KEY") ?? readEnv("TUBE_ALFRED_API_KEY");
-  const apiBaseUrl = optionalString(config.apiBaseUrl) ?? readEnv("TUBEALFRED_API_URL") ?? DEFAULT_API_URL;
+  const apiKey = optionalString(config.apiKey);
+  const apiBaseUrl = optionalString(config.apiBaseUrl) ?? DEFAULT_API_URL;
   const timeoutMs = optionalPositiveInteger(config.timeoutMs, "timeoutMs") ?? DEFAULT_TIMEOUT_MS;
   const retries = optionalNonNegativeInteger(config.retries, "retries") ?? DEFAULT_RETRIES;
 
   if (!apiKey) {
-    throw new Error("Missing TubeAlfred API key. Configure plugins.entries.\"tubealfred-youtube\".config.apiKey or set TUBEALFRED_API_KEY.");
+    throw new Error("Missing TubeAlfred API key. Configure plugins.entries.\"tubealfred-youtube\".config.apiKey.");
   }
 
   if (!/^ta_(live|test)_[A-Za-z0-9_-]+$/.test(apiKey)) {
