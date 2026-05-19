@@ -1,0 +1,76 @@
+{
+  "name": "@tubealfred/tubealfred-youtube",
+  "version": "0.1.0",
+  "description": "OpenClaw plugin exposing read-only TubeAlfred YouTube API tools for videos, transcripts, comments, replies, channels, playlists, search, and URL resolution.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.12.1",
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "openclaw.plugin.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "node --test tests/*.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm typecheck && pnpm test && pnpm build"
+  },
+  "keywords": [
+    "openclaw",
+    "openclaw-plugin",
+    "youtube",
+    "tubealfred",
+    "agent-tools",
+    "transcript",
+    "comments",
+    "search"
+  ],
+  "homepage": "https://tubealfred.com/mcp",
+  "bugs": {
+    "url": "https://github.com/tubealfred/openclaw-plugin/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tubealfred/openclaw-plugin.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "openclaw": {
+    "extensions": [
+      "./dist/index.js"
+    ],
+    "compat": {
+      "pluginApi": ">=2026.5.18",
+      "minGatewayVersion": "2026.5.18"
+    },
+    "build": {
+      "openclawVersion": "2026.5.18",
+      "pluginSdkVersion": "2026.5.18"
+    },
+    "install": {
+      "clawhubSpec": "@tubealfred/tubealfred-youtube",
+      "defaultChoice": "clawhub",
+      "minHostVersion": ">=2026.5.18"
+    }
+  },
+  "dependencies": {
+    "typebox": "^1.1.38"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.5",
+    "openclaw": "^2026.5.18",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.0"
+  },
+  "peerDependencies": {
+    "openclaw": ">=2026.5.18"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "id": "tubealfred-youtube",
+  "name": "TubeAlfred YouTube",
+  "description": "Read-only TubeAlfred YouTube API tools for videos, transcripts, comments, replies, channels, playlists, search, and URL resolution.",
+  "version": "0.1.0",
+  "contracts": {
+    "tools": [
+      "tubealfred_youtube_video_get",
+      "tubealfred_youtube_video_transcript",
+      "tubealfred_youtube_comments_list",
+      "tubealfred_youtube_comments_page",
+      "tubealfred_youtube_replies_list",
+      "tubealfred_youtube_replies_page",
+      "tubealfred_youtube_channel_get",
+      "tubealfred_youtube_channel_about",
+      "tubealfred_youtube_channel_videos",
+      "tubealfred_youtube_channel_shorts",
+      "tubealfred_youtube_channel_playlists",
+      "tubealfred_youtube_channel_community",
+      "tubealfred_youtube_search_query",
+      "tubealfred_youtube_search_hashtag",
+      "tubealfred_youtube_search_suggest",
+      "tubealfred_youtube_playlist_get",
+      "tubealfred_youtube_url_resolve"
+    ]
+  },
+  "uiHints": {
+    "apiKey": {
+      "label": "TubeAlfred API key",
+      "help": "Used to authenticate read-only calls to the TubeAlfred YouTube API. You can also set TUBEALFRED_API_KEY.",
+      "placeholder": "ta_live_...",
+      "sensitive": true
+    },
+    "apiBaseUrl": {
+      "label": "API base URL",
+      "help": "Advanced override for local or staging testing.",
+      "placeholder": "https://api.tubealfred.com",
+      "advanced": true
+    },
+    "timeoutMs": {
+      "label": "Request timeout",
+      "help": "Timeout in milliseconds for TubeAlfred API requests.",
+      "placeholder": "30000",
+      "advanced": true
+    },
+    "retries": {
+      "label": "Retries",
+      "help": "Retry count for transient network/API failures.",
+      "placeholder": "1",
+      "advanced": true
+    }
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "apiKey": {
+        "type": "string",
+        "description": "TubeAlfred API key. If omitted, the plugin reads TUBEALFRED_API_KEY or TUBE_ALFRED_API_KEY from the environment."
+      },
+      "apiBaseUrl": {
+        "type": "string",
+        "default": "https://api.tubealfred.com",
+        "description": "TubeAlfred API base URL."
+      },
+      "timeoutMs": {
+        "type": "integer",
+        "minimum": 1000,
+        "maximum": 300000,
+        "default": 30000,
+        "description": "Request timeout in milliseconds."
+      },
+      "retries": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 5,
+        "default": 1,
+        "description": "Retry count for transient failures."
+      }
+    }
+  }
+}
