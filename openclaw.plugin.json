@@ -2,7 +2,7 @@
   "id": "tubealfred-youtube",
   "name": "TubeAlfred YouTube",
   "description": "Read-only TubeAlfred YouTube API tools for videos, transcripts, comments, replies, channels, playlists, search, and URL resolution.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "contracts": {
     "tools": [
       "tubealfred_youtube_video_get",
