@@ -55,6 +55,17 @@ const ContinuationToken = Type.Optional(
   }),
 );
 
+const SEARCH_UPLOAD_DATE = ["all", "today", "week", "month", "year"] as const;
+const SEARCH_DURATION = ["all", "under_three_mins", "three_to_twenty_mins", "over_twenty_mins"] as const;
+const SEARCH_SORT = ["relevance", "popularity"] as const;
+const SEARCH_TYPE = ["all", "video", "shorts", "channel", "playlist", "movie"] as const;
+
+function enumParam(values: readonly string[], description: string) {
+  return Type.Optional(
+    Type.Unsafe<string>({ type: "string", enum: [...values], description }),
+  );
+}
+
 const VideoId = Type.String({
   minLength: 1,
   description: "YouTube video ID.",
@@ -250,12 +261,41 @@ const TOOLS: ToolDefinition[] = [
         minLength: 1,
         description: "YouTube search query.",
       }),
+      upload_date: enumParam(
+        SEARCH_UPLOAD_DATE,
+        "Filter by upload date. One of: all, today, week, month, year.",
+      ),
+      duration: enumParam(
+        SEARCH_DURATION,
+        "Filter by video duration. One of: all, under_three_mins, three_to_twenty_mins, over_twenty_mins.",
+      ),
+      sort: enumParam(SEARCH_SORT, "Search ranking preference. One of: relevance, popularity."),
+      type: enumParam(
+        SEARCH_TYPE,
+        "Restrict result type. One of: all, video, shorts, channel, playlist, movie.",
+      ),
+      features: Type.Optional(
+        Type.String({
+          minLength: 1,
+          description:
+            "Comma-separated feature filters: hd, subtitles, creative_commons, 3d, live, purchased, 4k, 360, location, hdr, vr180.",
+        }),
+      ),
+      live: Type.Optional(Type.Boolean({ description: "Shortcut for features=live." })),
+      shorts: Type.Optional(Type.Boolean({ description: "Shortcut for type=shorts." })),
       continuation_token: ContinuationToken,
     }),
     request: (params) => ({
       path: "/v1/youtube/search/",
       query: {
         query: requiredString(params.query, "query"),
+        upload_date: optionalEnum(params.upload_date, SEARCH_UPLOAD_DATE, "upload_date"),
+        duration: optionalEnum(params.duration, SEARCH_DURATION, "duration"),
+        sort: optionalEnum(params.sort, SEARCH_SORT, "sort"),
+        type: optionalEnum(params.type, SEARCH_TYPE, "type"),
+        features: optionalString(params.features),
+        live: optionalBoolean(params.live),
+        shorts: optionalBoolean(params.shorts),
         continuation_token: optionalString(params.continuation_token),
       },
     }),
@@ -550,6 +590,24 @@ function optionalString(value: unknown): string | undefined {
   const trimmed = value.trim();
 
   return trimmed === "" ? undefined : trimmed;
+}
+
+function optionalEnum(value: unknown, allowed: readonly string[], label: string): string | undefined {
+  const text = optionalString(value);
+
+  if (text === undefined) {
+    return undefined;
+  }
+
+  if (!allowed.includes(text)) {
+    throw new Error(`${label} must be one of: ${allowed.join(", ")}.`);
+  }
+
+  return text;
+}
+
+function optionalBoolean(value: unknown): boolean | undefined {
+  return value === true ? true : undefined;
 }
 
 function optionalCount(value: unknown): number | undefined {
