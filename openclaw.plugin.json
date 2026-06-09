@@ -2,7 +2,7 @@
   "id": "tubealfred-youtube",
   "name": "TubeAlfred YouTube",
   "description": "Read-only TubeAlfred YouTube API tools plus billing usage lookup.",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "contracts": {
     "tools": [
       "tubealfred_billing_usage",
