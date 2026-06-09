@@ -2,12 +2,12 @@ import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
 import { Type } from "typebox";
 
 const PLUGIN_ID = "tubealfred-youtube";
-const PRODUCT_NAME = "TubeAlfred YouTube OpenClaw plugin";
+const PRODUCT_NAME = "TubeAlfred OpenClaw plugin";
 const PACKAGE_VERSION = "0.1.1";
 const DEFAULT_API_URL = "https://api.tubealfred.com";
 const DEFAULT_TIMEOUT_MS = 30_000;
 const DEFAULT_RETRIES = 1;
-const MAX_COUNT = 500;
+const MAX_COUNT = 100;
 
 type HttpMethod = "GET" | "POST";
 type QueryValue = string | number | boolean | undefined;
@@ -55,10 +55,39 @@ const ContinuationToken = Type.Optional(
   }),
 );
 
+const Fields = Type.Optional(
+  Type.String({
+    minLength: 1,
+    description: "Comma-separated response fields to include.",
+  }),
+);
+
+const Language = Type.Optional(
+  Type.String({
+    minLength: 2,
+    description: "Preferred caption language code, for example en, es, or en-US.",
+  }),
+);
+
+const Ids = Type.Array(
+  Type.String({
+    minLength: 1,
+    description: "ID.",
+  }),
+  {
+    minItems: 1,
+    maxItems: 50,
+    uniqueItems: true,
+    description: "One to 50 IDs.",
+  },
+);
+
 const SEARCH_UPLOAD_DATE = ["all", "today", "week", "month", "year"] as const;
 const SEARCH_DURATION = ["all", "under_three_mins", "three_to_twenty_mins", "over_twenty_mins"] as const;
 const SEARCH_SORT = ["relevance", "popularity"] as const;
 const SEARCH_TYPE = ["all", "video", "shorts", "channel", "playlist", "movie"] as const;
+const CAPTION_KIND = ["manual", "auto", "any"] as const;
+const COMMENT_SORT = ["top", "newest"] as const;
 
 function enumParam(values: readonly string[], description: string) {
   return Type.Optional(
@@ -88,13 +117,55 @@ const PlaylistId = Type.String({
 
 const TOOLS: ToolDefinition[] = [
   {
+    name: "tubealfred_billing_usage",
+    description: "Fetch TubeAlfred credit balance and billing usage.",
+    parameters: Type.Object({}),
+    request: () => ({
+      path: "/v1/billing/usage",
+    }),
+  },
+  {
     name: "tubealfred_youtube_video_get",
     description: "Fetch YouTube video details through TubeAlfred.",
     parameters: Type.Object({
       video_id: VideoId,
+      fields: Fields,
     }),
     request: (params) => ({
       path: `/v1/youtube/video/${encodeURIComponent(requiredString(params.video_id, "video_id"))}`,
+      query: {
+        fields: optionalString(params.fields),
+      },
+    }),
+  },
+  {
+    name: "tubealfred_youtube_video_enhanced",
+    description: "Fetch enhanced YouTube video details through TubeAlfred.",
+    parameters: Type.Object({
+      video_id: VideoId,
+      fields: Fields,
+    }),
+    request: (params) => ({
+      path: `/v1/youtube/video/${encodeURIComponent(requiredString(params.video_id, "video_id"))}/enhanced`,
+      query: {
+        fields: optionalString(params.fields),
+      },
+    }),
+  },
+  {
+    name: "tubealfred_youtube_video_transcript_full",
+    description: "Fetch a YouTube video transcript through TubeAlfred's non-fast transcript endpoint.",
+    parameters: Type.Object({
+      video_id: VideoId,
+      language: Language,
+      kind: enumParam(CAPTION_KIND, "Caption track kind preference."),
+    }),
+    request: (params) => ({
+      path: `/v1/youtube/video/${encodeURIComponent(requiredString(params.video_id, "video_id"))}/transcript`,
+      query: {
+        language: optionalString(params.language),
+        kind: optionalEnum(params.kind, CAPTION_KIND, "kind"),
+      },
     }),
   },
   {
@@ -102,9 +173,15 @@ const TOOLS: ToolDefinition[] = [
     description: "Fetch a YouTube video transcript through TubeAlfred.",
     parameters: Type.Object({
       video_id: VideoId,
+      language: Language,
+      kind: enumParam(CAPTION_KIND, "Caption track kind preference."),
     }),
     request: (params) => ({
       path: `/v1/youtube/video/${encodeURIComponent(requiredString(params.video_id, "video_id"))}/transcript/fast`,
+      query: {
+        language: optionalString(params.language),
+        kind: optionalEnum(params.kind, CAPTION_KIND, "kind"),
+      },
     }),
   },
   {
@@ -113,11 +190,13 @@ const TOOLS: ToolDefinition[] = [
     parameters: Type.Object({
       video_id: VideoId,
       count: Count,
+      sort: enumParam(COMMENT_SORT, "Comment sort order."),
     }),
     request: (params) => ({
       path: `/v1/youtube/video/${encodeURIComponent(requiredString(params.video_id, "video_id"))}/comments`,
       query: {
         count: optionalCount(params.count),
+        sort: optionalEnum(params.sort, COMMENT_SORT, "sort"),
       },
     }),
   },
@@ -148,11 +227,13 @@ const TOOLS: ToolDefinition[] = [
       video_id: VideoId,
       comment_id: CommentId,
       count: Count,
+      sort: enumParam(COMMENT_SORT, "Comment sort order."),
     }),
     request: (params) => ({
       path: `/v1/youtube/video/${encodeURIComponent(requiredString(params.video_id, "video_id"))}/comments/${encodeURIComponent(requiredString(params.comment_id, "comment_id"))}/replies`,
       query: {
         count: optionalCount(params.count),
+        sort: optionalEnum(params.sort, COMMENT_SORT, "sort"),
       },
     }),
   },
@@ -178,13 +259,49 @@ const TOOLS: ToolDefinition[] = [
     }),
   },
   {
+    name: "tubealfred_youtube_related_videos",
+    description: "Fetch related YouTube videos through TubeAlfred.",
+    parameters: Type.Object({
+      video_id: VideoId,
+      continuation_token: ContinuationToken,
+    }),
+    request: (params) => ({
+      path: `/v1/youtube/video/${encodeURIComponent(requiredString(params.video_id, "video_id"))}/related`,
+      query: {
+        continuation_token: optionalString(params.continuation_token),
+      },
+    }),
+  },
+  {
+    name: "tubealfred_youtube_related_videos_page",
+    description: "Fetch a paginated related-videos page through TubeAlfred.",
+    parameters: Type.Object({
+      video_id: VideoId,
+      continuation_token: Type.String({
+        minLength: 1,
+        description: "Pagination continuation token from a previous TubeAlfred response.",
+      }),
+    }),
+    request: (params) => ({
+      method: "POST",
+      path: `/v1/youtube/video/${encodeURIComponent(requiredString(params.video_id, "video_id"))}/related/page`,
+      body: {
+        continuation_token: requiredString(params.continuation_token, "continuation_token"),
+      },
+    }),
+  },
+  {
     name: "tubealfred_youtube_channel_get",
     description: "Fetch YouTube channel details through TubeAlfred.",
     parameters: Type.Object({
       channel_id: ChannelId,
+      fields: Fields,
     }),
     request: (params) => ({
       path: `/v1/youtube/channel/${encodeURIComponent(requiredString(params.channel_id, "channel_id"))}`,
+      query: {
+        fields: optionalString(params.fields),
+      },
     }),
   },
   {
@@ -192,9 +309,13 @@ const TOOLS: ToolDefinition[] = [
     description: "Fetch a YouTube channel about section through TubeAlfred.",
     parameters: Type.Object({
       channel_id: ChannelId,
+      fields: Fields,
     }),
     request: (params) => ({
       path: `/v1/youtube/channel/${encodeURIComponent(requiredString(params.channel_id, "channel_id"))}/about`,
+      query: {
+        fields: optionalString(params.fields),
+      },
     }),
   },
   {
@@ -208,6 +329,56 @@ const TOOLS: ToolDefinition[] = [
       path: `/v1/youtube/channel/${encodeURIComponent(requiredString(params.channel_id, "channel_id"))}/videos`,
       query: {
         continuation_token: optionalString(params.continuation_token),
+      },
+    }),
+  },
+  {
+    name: "tubealfred_youtube_channel_videos_page",
+    description: "Fetch a paginated YouTube channel videos page through TubeAlfred.",
+    parameters: Type.Object({
+      channel_id: ChannelId,
+      continuation_token: Type.String({
+        minLength: 1,
+        description: "Pagination continuation token from a previous TubeAlfred response.",
+      }),
+    }),
+    request: (params) => ({
+      method: "POST",
+      path: `/v1/youtube/channel/${encodeURIComponent(requiredString(params.channel_id, "channel_id"))}/videos/page`,
+      body: {
+        continuation_token: requiredString(params.continuation_token, "continuation_token"),
+      },
+    }),
+  },
+  {
+    name: "tubealfred_youtube_channel_streams",
+    description: "Fetch YouTube channel live streams through TubeAlfred.",
+    parameters: Type.Object({
+      channel_id: ChannelId,
+      continuation_token: ContinuationToken,
+    }),
+    request: (params) => ({
+      path: `/v1/youtube/channel/${encodeURIComponent(requiredString(params.channel_id, "channel_id"))}/streams`,
+      query: {
+        continuation_token: optionalString(params.continuation_token),
+      },
+    }),
+  },
+  {
+    name: "tubealfred_youtube_channel_streams_page",
+    description: "Fetch a paginated YouTube channel live streams page through TubeAlfred.",
+    parameters: Type.Object({
+      channel_id: ChannelId,
+      continuation_token: Type.String({
+        minLength: 1,
+        description: "Pagination continuation token from a previous TubeAlfred response.",
+      }),
+    }),
+    request: (params) => ({
+      method: "POST",
+      path: `/v1/youtube/channel/${encodeURIComponent(requiredString(params.channel_id, "channel_id"))}/streams/page`,
+      body: {
+        continuation_token: requiredString(params.continuation_token, "continuation_token"),
       },
     }),
   },
@@ -226,6 +397,24 @@ const TOOLS: ToolDefinition[] = [
     }),
   },
   {
+    name: "tubealfred_youtube_channel_shorts_page",
+    description: "Fetch a paginated YouTube channel Shorts page through TubeAlfred.",
+    parameters: Type.Object({
+      channel_id: ChannelId,
+      continuation_token: Type.String({
+        minLength: 1,
+        description: "Pagination continuation token from a previous TubeAlfred response.",
+      }),
+    }),
+    request: (params) => ({
+      method: "POST",
+      path: `/v1/youtube/channel/${encodeURIComponent(requiredString(params.channel_id, "channel_id"))}/shorts/page`,
+      body: {
+        continuation_token: requiredString(params.continuation_token, "continuation_token"),
+      },
+    }),
+  },
+  {
     name: "tubealfred_youtube_channel_playlists",
     description: "Fetch YouTube channel playlists through TubeAlfred.",
     parameters: Type.Object({
@@ -236,6 +425,24 @@ const TOOLS: ToolDefinition[] = [
       path: `/v1/youtube/channel/${encodeURIComponent(requiredString(params.channel_id, "channel_id"))}/playlists`,
       query: {
         continuation_token: optionalString(params.continuation_token),
+      },
+    }),
+  },
+  {
+    name: "tubealfred_youtube_channel_playlists_page",
+    description: "Fetch a paginated YouTube channel playlists page through TubeAlfred.",
+    parameters: Type.Object({
+      channel_id: ChannelId,
+      continuation_token: Type.String({
+        minLength: 1,
+        description: "Pagination continuation token from a previous TubeAlfred response.",
+      }),
+    }),
+    request: (params) => ({
+      method: "POST",
+      path: `/v1/youtube/channel/${encodeURIComponent(requiredString(params.channel_id, "channel_id"))}/playlists/page`,
+      body: {
+        continuation_token: requiredString(params.continuation_token, "continuation_token"),
       },
     }),
   },
@@ -254,6 +461,24 @@ const TOOLS: ToolDefinition[] = [
     }),
   },
   {
+    name: "tubealfred_youtube_channel_community_page",
+    description: "Fetch a paginated YouTube channel community posts page through TubeAlfred.",
+    parameters: Type.Object({
+      channel_id: ChannelId,
+      continuation_token: Type.String({
+        minLength: 1,
+        description: "Pagination continuation token from a previous TubeAlfred response.",
+      }),
+    }),
+    request: (params) => ({
+      method: "POST",
+      path: `/v1/youtube/channel/${encodeURIComponent(requiredString(params.channel_id, "channel_id"))}/community/page`,
+      body: {
+        continuation_token: requiredString(params.continuation_token, "continuation_token"),
+      },
+    }),
+  },
+  {
     name: "tubealfred_youtube_search_query",
     description: "Search YouTube through TubeAlfred.",
     parameters: Type.Object({
@@ -261,6 +486,8 @@ const TOOLS: ToolDefinition[] = [
         minLength: 1,
         description: "YouTube search query.",
       }),
+      continuation_token: ContinuationToken,
+      channel_id: Type.Optional(ChannelId),
       upload_date: enumParam(
         SEARCH_UPLOAD_DATE,
         "Filter by upload date. One of: all, today, week, month, year.",
@@ -283,12 +510,13 @@ const TOOLS: ToolDefinition[] = [
       ),
       live: Type.Optional(Type.Boolean({ description: "Shortcut for features=live." })),
       shorts: Type.Optional(Type.Boolean({ description: "Shortcut for type=shorts." })),
-      continuation_token: ContinuationToken,
     }),
     request: (params) => ({
       path: "/v1/youtube/search/",
       query: {
         query: requiredString(params.query, "query"),
+        continuation_token: optionalString(params.continuation_token),
+        channel_id: optionalString(params.channel_id),
         upload_date: optionalEnum(params.upload_date, SEARCH_UPLOAD_DATE, "upload_date"),
         duration: optionalEnum(params.duration, SEARCH_DURATION, "duration"),
         sort: optionalEnum(params.sort, SEARCH_SORT, "sort"),
@@ -296,8 +524,60 @@ const TOOLS: ToolDefinition[] = [
         features: optionalString(params.features),
         live: optionalBoolean(params.live),
         shorts: optionalBoolean(params.shorts),
-        continuation_token: optionalString(params.continuation_token),
       },
+    }),
+  },
+  {
+    name: "tubealfred_youtube_search_page",
+    description: "Fetch a paginated YouTube search results page through TubeAlfred.",
+    parameters: Type.Object({
+      query: Type.String({
+        minLength: 1,
+        description: "YouTube search query.",
+      }),
+      continuation_token: Type.String({
+        minLength: 1,
+        description: "Pagination continuation token from a previous TubeAlfred response.",
+      }),
+      channel_id: Type.Optional(ChannelId),
+      upload_date: enumParam(
+        SEARCH_UPLOAD_DATE,
+        "Filter by upload date. One of: all, today, week, month, year.",
+      ),
+      duration: enumParam(
+        SEARCH_DURATION,
+        "Filter by video duration. One of: all, under_three_mins, three_to_twenty_mins, over_twenty_mins.",
+      ),
+      sort: enumParam(SEARCH_SORT, "Search ranking preference. One of: relevance, popularity."),
+      type: enumParam(
+        SEARCH_TYPE,
+        "Restrict result type. One of: all, video, shorts, channel, playlist, movie.",
+      ),
+      features: Type.Optional(
+        Type.String({
+          minLength: 1,
+          description:
+            "Comma-separated feature filters: hd, subtitles, creative_commons, 3d, live, purchased, 4k, 360, location, hdr, vr180.",
+        }),
+      ),
+      live: Type.Optional(Type.Boolean({ description: "Shortcut for features=live." })),
+      shorts: Type.Optional(Type.Boolean({ description: "Shortcut for type=shorts." })),
+    }),
+    request: (params) => ({
+      method: "POST",
+      path: "/v1/youtube/search/page",
+      body: compactRecord({
+        query: requiredString(params.query, "query"),
+        continuation_token: requiredString(params.continuation_token, "continuation_token"),
+        channel_id: optionalString(params.channel_id),
+        upload_date: optionalEnum(params.upload_date, SEARCH_UPLOAD_DATE, "upload_date"),
+        duration: optionalEnum(params.duration, SEARCH_DURATION, "duration"),
+        sort: optionalEnum(params.sort, SEARCH_SORT, "sort"),
+        type: optionalEnum(params.type, SEARCH_TYPE, "type"),
+        features: optionalString(params.features),
+        live: optionalBoolean(params.live),
+        shorts: optionalBoolean(params.shorts),
+      }),
     }),
   },
   {
@@ -315,6 +595,28 @@ const TOOLS: ToolDefinition[] = [
       query: {
         hashtag: requiredString(params.hashtag, "hashtag"),
         continuation_token: optionalString(params.continuation_token),
+      },
+    }),
+  },
+  {
+    name: "tubealfred_youtube_search_hashtag_page",
+    description: "Fetch a paginated YouTube hashtag search page through TubeAlfred.",
+    parameters: Type.Object({
+      hashtag: Type.String({
+        minLength: 1,
+        description: "YouTube hashtag, with or without the # prefix.",
+      }),
+      continuation_token: Type.String({
+        minLength: 1,
+        description: "Pagination continuation token from a previous TubeAlfred response.",
+      }),
+    }),
+    request: (params) => ({
+      method: "POST",
+      path: "/v1/youtube/search/hashtag/page",
+      body: {
+        hashtag: requiredString(params.hashtag, "hashtag"),
+        continuation_token: requiredString(params.continuation_token, "continuation_token"),
       },
     }),
   },
@@ -342,6 +644,32 @@ const TOOLS: ToolDefinition[] = [
     }),
   },
   {
+    name: "tubealfred_youtube_trending",
+    description: "Fetch trending YouTube videos through TubeAlfred.",
+    parameters: Type.Object({}),
+    request: () => ({
+      path: "/v1/youtube/trending",
+    }),
+  },
+  {
+    name: "tubealfred_youtube_trending_shorts",
+    description: "Fetch trending YouTube Shorts through TubeAlfred.",
+    parameters: Type.Object({}),
+    request: () => ({
+      path: "/v1/youtube/trending/shorts",
+    }),
+  },
+  {
+    name: "tubealfred_youtube_playlist_metadata",
+    description: "Fetch YouTube playlist metadata through TubeAlfred.",
+    parameters: Type.Object({
+      playlist_id: PlaylistId,
+    }),
+    request: (params) => ({
+      path: `/v1/youtube/playlist/${encodeURIComponent(requiredString(params.playlist_id, "playlist_id"))}/metadata`,
+    }),
+  },
+  {
     name: "tubealfred_youtube_playlist_get",
     description: "Fetch YouTube playlist contents through TubeAlfred.",
     parameters: Type.Object({
@@ -352,6 +680,24 @@ const TOOLS: ToolDefinition[] = [
       path: `/v1/youtube/playlist/${encodeURIComponent(requiredString(params.playlist_id, "playlist_id"))}`,
       query: {
         continuation_token: optionalString(params.continuation_token),
+      },
+    }),
+  },
+  {
+    name: "tubealfred_youtube_playlist_page",
+    description: "Fetch a paginated YouTube playlist contents page through TubeAlfred.",
+    parameters: Type.Object({
+      playlist_id: PlaylistId,
+      continuation_token: Type.String({
+        minLength: 1,
+        description: "Pagination continuation token from a previous TubeAlfred response.",
+      }),
+    }),
+    request: (params) => ({
+      method: "POST",
+      path: `/v1/youtube/playlist/${encodeURIComponent(requiredString(params.playlist_id, "playlist_id"))}/page`,
+      body: {
+        continuation_token: requiredString(params.continuation_token, "continuation_token"),
       },
     }),
   },
@@ -371,12 +717,48 @@ const TOOLS: ToolDefinition[] = [
       },
     }),
   },
+  {
+    name: "tubealfred_youtube_videos_batch",
+    description: "Fetch details for multiple YouTube videos through TubeAlfred.",
+    parameters: Type.Object({
+      ids: Ids,
+      fields: Fields,
+    }),
+    request: (params) => ({
+      method: "POST",
+      path: "/v1/youtube/videos:batch",
+      query: {
+        fields: optionalString(params.fields),
+      },
+      body: {
+        ids: requiredStringList(params.ids, "ids"),
+      },
+    }),
+  },
+  {
+    name: "tubealfred_youtube_channels_batch",
+    description: "Fetch details for multiple YouTube channels through TubeAlfred.",
+    parameters: Type.Object({
+      ids: Ids,
+      fields: Fields,
+    }),
+    request: (params) => ({
+      method: "POST",
+      path: "/v1/youtube/channels:batch",
+      query: {
+        fields: optionalString(params.fields),
+      },
+      body: {
+        ids: requiredStringList(params.ids, "ids"),
+      },
+    }),
+  },
 ];
 
 export default definePluginEntry({
   id: PLUGIN_ID,
   name: "TubeAlfred YouTube",
-  description: "Read-only TubeAlfred YouTube API tools for OpenClaw agents.",
+  description: "Read-only TubeAlfred YouTube API tools plus billing usage lookup for OpenClaw agents.",
   register(api) {
     for (const tool of TOOLS) {
       api.registerTool({
@@ -410,7 +792,7 @@ export default definePluginEntry({
 
 function labelForTool(name: string): string {
   return name
-    .replace(/^tubealfred_youtube_/, "")
+    .replace(/^tubealfred_(?:youtube_)?/, "")
     .split("_")
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
@@ -580,6 +962,24 @@ function requiredString(value: unknown, label: string): string {
   }
 
   return text;
+}
+
+function requiredStringList(value: unknown, label: string): string[] {
+  if (!Array.isArray(value) || value.length === 0) {
+    throw new Error(`${label} must be a non-empty list.`);
+  }
+
+  if (value.length > 50) {
+    throw new Error(`${label} must contain at most 50 items.`);
+  }
+
+  const items = value.map((item) => requiredString(item, `${label} item`));
+
+  if (new Set(items).size !== items.length) {
+    throw new Error(`${label} items must be unique.`);
+  }
+
+  return items;
 }
 
 function optionalString(value: unknown): string | undefined {

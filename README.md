@@ -1,12 +1,12 @@
 # TubeAlfred YouTube OpenClaw Plugin
 
-Read-only TubeAlfred YouTube API tools for OpenClaw agents. It lets agents fetch YouTube video, transcript, comment, reply, channel, Shorts, playlist, community, search, hashtag, suggestion, and URL resolution data through your TubeAlfred account.
+Read-only TubeAlfred YouTube API tools plus billing usage lookup for OpenClaw agents. It lets agents fetch YouTube video, transcript, comment, reply, channel, Shorts, playlist, community, search, hashtag, suggestion, URL resolution, and account usage data through your TubeAlfred account.
 
 ## Requirements
 
 - OpenClaw installed locally.
 - A TubeAlfred account.
-- A TubeAlfred API key with the `youtube.read` scope.
+- A TubeAlfred API key with `youtube.read` for YouTube tools and `billing.read` for billing usage.
 
 Create an API key in TubeAlfred:
 
@@ -14,7 +14,7 @@ Create an API key in TubeAlfred:
 https://tubealfred.com/app/api-keys
 ```
 
-Choose **Create key**, select the `youtube.read` scope, then copy the key immediately. TubeAlfred only shows the full key once.
+Choose **Create key**, select the scopes you need, then copy the key immediately. TubeAlfred only shows the full key once.
 
 ## Install
 
@@ -67,9 +67,10 @@ Advanced config:
 
 ## Tools
 
-This plugin mirrors the TubeAlfred MCP/API YouTube surface with vendor-prefixed OpenClaw tool names:
+This plugin mirrors the TubeAlfred MCP/API YouTube surface and adds billing usage lookup with vendor-prefixed OpenClaw tool names:
 
 ```text
+tubealfred_billing_usage
 tubealfred_youtube_video_get
 tubealfred_youtube_video_transcript
 tubealfred_youtube_comments_list

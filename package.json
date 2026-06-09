@@ -1,7 +1,7 @@
 {
   "name": "@tubealfred/tubealfred-youtube",
   "version": "0.1.4",
-  "description": "OpenClaw plugin exposing read-only TubeAlfred YouTube API tools for videos, transcripts, comments, replies, channels, playlists, search, and URL resolution.",
+  "description": "OpenClaw plugin exposing TubeAlfred YouTube API tools and billing usage lookup.",
   "license": "MIT",
   "type": "module",
   "packageManager": "pnpm@10.12.1",
