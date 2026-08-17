@@ -1203,6 +1203,8 @@ export const OPERATIONS = [
         "count": {
           "type": "integer",
           "example": "100",
+          "minimum": 1,
+          "maximum": 100,
           "description": "Number of comments to fetch per page."
         },
         "sort": {
@@ -1232,7 +1234,9 @@ export const OPERATIONS = [
         "required": false,
         "schema": {
           "type": "integer",
-          "example": "100"
+          "example": "100",
+          "minimum": 1,
+          "maximum": 100
         }
       },
       {
@@ -1281,7 +1285,9 @@ export const OPERATIONS = [
         "count": {
           "type": "integer",
           "description": "Number of comments to fetch per page.",
-          "example": "100"
+          "example": "100",
+          "minimum": 1,
+          "maximum": 100
         }
       },
       "required": [
@@ -1317,7 +1323,9 @@ export const OPERATIONS = [
         "schema": {
           "type": "integer",
           "description": "Number of comments to fetch per page.",
-          "example": "100"
+          "example": "100",
+          "minimum": 1,
+          "maximum": 100
         }
       }
     ]
@@ -1334,6 +1342,8 @@ export const OPERATIONS = [
         "count": {
           "type": "integer",
           "example": "100",
+          "minimum": 1,
+          "maximum": 100,
           "description": "Number of comments to fetch per page."
         },
         "sort": {
@@ -1369,7 +1379,9 @@ export const OPERATIONS = [
         "required": false,
         "schema": {
           "type": "integer",
-          "example": "100"
+          "example": "100",
+          "minimum": 1,
+          "maximum": 100
         }
       },
       {
@@ -1432,7 +1444,9 @@ export const OPERATIONS = [
         "count": {
           "type": "integer",
           "description": "Number of comments to fetch per page.",
-          "example": "100"
+          "example": "100",
+          "minimum": 1,
+          "maximum": 100
         }
       },
       "required": [
@@ -1478,7 +1492,9 @@ export const OPERATIONS = [
         "schema": {
           "type": "integer",
           "description": "Number of comments to fetch per page.",
-          "example": "100"
+          "example": "100",
+          "minimum": 1,
+          "maximum": 100
         }
       }
     ]
