@@ -101,6 +101,8 @@ pnpm typecheck
 pnpm build
 ```
 
+Tool names, schemas, routes, and request mapping are generated from the versioned TubeAlfred operation manifest. Use `pnpm contract:sync` to refresh it; builds run `pnpm contract:check` to reject drift.
+
 Local OpenClaw install:
 
 ```bash
