@@ -5,7 +5,7 @@ const PLUGIN_ID = "tubealfred-youtube";
 const PRODUCT_NAME = "TubeAlfred OpenClaw plugin";
 const PACKAGE_VERSION = "0.1.1";
 const DEFAULT_API_URL = "https://api.tubealfred.com";
-const DEFAULT_TIMEOUT_MS = 30_000;
+const DEFAULT_TIMEOUT_MS = 35_000;
 const DEFAULT_RETRIES = 1;
 const MAX_COUNT = 100;
 

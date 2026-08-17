@@ -56,7 +56,7 @@ Advanced config:
         config: {
           apiKey: "ta_live_...",
           apiBaseUrl: "https://api.tubealfred.com",
-          timeoutMs: 30000,
+          timeoutMs: 35000,
           retries: 1
         }
       }

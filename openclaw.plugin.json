@@ -59,7 +59,7 @@
     "timeoutMs": {
       "label": "Request timeout",
       "help": "Timeout in milliseconds for TubeAlfred API requests.",
-      "placeholder": "30000",
+      "placeholder": "35000",
       "advanced": true
     },
     "retries": {
@@ -86,7 +86,7 @@
         "type": "integer",
         "minimum": 1000,
         "maximum": 300000,
-        "default": 30000,
+        "default": 35000,
         "description": "Request timeout in milliseconds."
       },
       "retries": {

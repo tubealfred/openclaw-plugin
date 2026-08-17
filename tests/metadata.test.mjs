@@ -67,3 +67,10 @@ test("manifest keeps API key config sensitive", async () => {
   assert.equal(manifest.uiHints.apiKey.sensitive, true);
   assert.equal(manifest.configSchema.additionalProperties, false);
 });
+
+test("manifest leaves response margin above the API timeout", async () => {
+  const manifest = await readJson("../openclaw.plugin.json");
+
+  assert.equal(manifest.uiHints.timeoutMs.placeholder, "35000");
+  assert.equal(manifest.configSchema.properties.timeoutMs.default, 35000);
+});
