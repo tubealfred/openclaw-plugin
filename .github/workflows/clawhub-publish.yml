@@ -46,7 +46,7 @@ jobs:
           npx -y clawhub package publish . \
             --no-input \
             --display-name "TubeAlfred — YouTube Transcripts, Comments & Channel Data" \
-            --topics "youtube,youtube-transcript,youtube-comments,openclaw,channel-data" \
+            --topics "youtube,youtube-transcript,youtube-comments,channel-data" \
             --wait --wait-timeout 600 \
             --source-repo "${{ github.repository }}" \
             --source-commit "${{ github.sha }}" \
