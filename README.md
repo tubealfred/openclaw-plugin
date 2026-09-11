@@ -1,6 +1,12 @@
-# TubeAlfred YouTube OpenClaw Plugin
+# TubeAlfred — YouTube Transcripts, Comments & Channel Data for OpenClaw
 
-Read-only TubeAlfred YouTube API tools plus billing usage lookup for OpenClaw agents. It lets agents fetch YouTube video, transcript, comment, reply, channel, Shorts, playlist, community, search, hashtag, suggestion, URL resolution, and account usage data through your TubeAlfred account.
+[TubeAlfred](https://tubealfred.com) brings YouTube transcripts, comments and channel data into OpenClaw. No YouTube API key required. No YouTube Data API quota to manage.
+
+Retrieve available YouTube transcripts with timestamps and caption-language metadata. List a channel's videos and retrieve their available transcripts, or explore comments, replies, Shorts, playlists, community posts, search, and video details. All YouTube operations are read-only; the plugin also includes TubeAlfred billing usage lookup.
+
+**100 free credits on signup. Most successful YouTube tool calls cost 1 credit.**
+
+Looking for the hosted MCP server for Claude, ChatGPT or Cursor instead? See [TubeAlfred MCP](https://github.com/tubealfred/mcp) and connect to `https://mcp.tubealfred.com/`.
 
 ## Requirements
 

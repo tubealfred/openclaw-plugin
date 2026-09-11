@@ -21,6 +21,13 @@ test("package uses the intended OpenClaw package identity", async () => {
   assert.equal(pkg.name, "@tubealfred/tubealfred-youtube");
   assert.equal(pkg.openclaw.extensions[0], "./dist/index.js");
   assert.equal(pkg.openclaw.install.clawhubSpec, "@tubealfred/tubealfred-youtube");
+  const manifest = await readJson("../openclaw.plugin.json");
+  assert.equal(manifest.version, pkg.version);
+  assert.equal(manifest.description, pkg.description);
+  assert.match(manifest.name, /Transcripts/);
+  assert.match(pkg.description, /No YouTube API key required/);
+  assert.doesNotMatch(pkg.description, /No API key required/);
+  assert.ok(pkg.keywords.includes("youtube-transcript"));
 });
 
 test("manifest declares full TubeAlfred tool coverage", async () => {

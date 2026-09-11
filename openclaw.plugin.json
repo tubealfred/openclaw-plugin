@@ -1,8 +1,8 @@
 {
   "id": "tubealfred-youtube",
-  "name": "TubeAlfred YouTube",
-  "description": "Read-only TubeAlfred YouTube API tools plus billing usage lookup.",
-  "version": "0.1.5",
+  "name": "TubeAlfred — YouTube Transcripts, Comments & Channel Data",
+  "description": "Bring YouTube transcripts, comments and channel data into OpenClaw. No YouTube API key required.",
+  "version": "0.1.7",
   "contracts": {
     "tools": [
       "tubealfred_billing_usage",

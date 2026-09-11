@@ -1,7 +1,7 @@
 {
   "name": "@tubealfred/tubealfred-youtube",
-  "version": "0.1.6",
-  "description": "OpenClaw plugin exposing TubeAlfred YouTube API tools and billing usage lookup.",
+  "version": "0.1.7",
+  "description": "Bring YouTube transcripts, comments and channel data into OpenClaw. No YouTube API key required.",
   "license": "MIT",
   "type": "module",
   "packageManager": "pnpm@10.12.1",
@@ -28,10 +28,14 @@
     "tubealfred",
     "agent-tools",
     "transcript",
+    "youtube-transcript",
+    "youtube-comments",
+    "youtube-api",
+    "no-youtube-api-key",
     "comments",
     "search"
   ],
-  "homepage": "https://tubealfred.com/mcp",
+  "homepage": "https://tubealfred.com",
   "bugs": {
     "url": "https://github.com/tubealfred/openclaw-plugin/issues"
   },

@@ -45,6 +45,9 @@ jobs:
           npx -y clawhub login --token "$CLAWHUB_TOKEN" --no-browser
           npx -y clawhub package publish . \
             --no-input \
+            --display-name "TubeAlfred — YouTube Transcripts, Comments & Channel Data" \
+            --topics "youtube,youtube-transcript,youtube-comments,openclaw,channel-data" \
+            --wait --wait-timeout 600 \
             --source-repo "${{ github.repository }}" \
             --source-commit "${{ github.sha }}" \
             --source-ref "${{ github.ref_name }}"
