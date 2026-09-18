@@ -2,7 +2,7 @@
   "id": "tubealfred-youtube",
   "name": "TubeAlfred — YouTube Transcripts, Comments & Channel Data",
   "description": "Bring YouTube transcripts, comments and channel data into OpenClaw. No YouTube API key required.",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "contracts": {
     "tools": [
       "tubealfred_billing_usage",

@@ -1,6 +1,6 @@
 {
   "name": "@tubealfred/tubealfred-youtube",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Bring YouTube transcripts, comments and channel data into OpenClaw. No YouTube API key required.",
   "license": "MIT",
   "type": "module",
