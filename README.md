@@ -4,7 +4,7 @@
 
 Retrieve available YouTube transcripts with timestamps and caption-language metadata. List a channel's videos and retrieve their available transcripts, or explore comments, replies, Shorts, playlists, community posts, search, and video details. All YouTube operations are read-only; the plugin also includes TubeAlfred billing usage lookup.
 
-**100 free credits on signup. Most successful YouTube tool calls cost 1 credit.**
+**50 free credits on signup, valid for 14 days. Most successful YouTube tool calls cost 1 credit.**
 
 Looking for the hosted MCP server for Claude, ChatGPT or Cursor instead? See [TubeAlfred MCP](https://github.com/tubealfred/mcp) and connect to `https://mcp.tubealfred.com/`.
 
