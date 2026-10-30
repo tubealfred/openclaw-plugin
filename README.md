@@ -4,9 +4,13 @@
 
 Retrieve available YouTube transcripts with timestamps and caption-language metadata. List a channel's videos and retrieve their available transcripts, or explore comments, replies, Shorts, playlists, community posts, search, and video details. All YouTube operations are read-only; the plugin also includes TubeAlfred billing usage lookup.
 
-**50 free credits on signup, valid for 14 days. Most successful YouTube tool calls cost 1 credit.**
+**Free accounts reset to 50 credits every month on their signup anniversary. Unused free credits do not roll over. Most successful YouTube tool calls cost 1 credit.**
 
 Looking for the hosted MCP server for Claude, ChatGPT or Cursor instead? See [TubeAlfred MCP](https://github.com/tubealfred/mcp) and connect to `https://mcp.tubealfred.com/`.
+
+## Credits
+
+Free accounts start with 50 credits. The free allowance resets to 50 each month on your signup anniversary; unused free credits do not roll over. Resets affect only the free allowance. No credit card required. See the [current pricing and credits](https://tubealfred.com/pricing.md) for plan and usage details.
 
 ## Requirements
 
